@@ -1,0 +1,7 @@
+{
+  "name": "UniConnect",
+  "description": "The ultimate all-in-one platform for university students. Find housing, food, services, and manage payments effortlessly.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
