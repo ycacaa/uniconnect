@@ -3,29 +3,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { GoogleGenAI } from "@google/genai";
 import { 
-  MapPin, Wallet, ShoppingCart, ArrowRight, Printer, Shirt, Bike, 
-  CreditCard, ExternalLink, Bot, X, Send, Mail, Lock, User, GraduationCap,
-  Shield, CheckCircle, Smartphone, Star, Wind, Wifi, Zap, Bath, Home
+  MapPin, ShoppingCart, ArrowRight, Printer, Shirt, Bike, 
+  ExternalLink, Bot, X, Send, Mail, Lock, User, GraduationCap,
+  Shield, CheckCircle, Smartphone, Star, Wind, Wifi, Zap, Bath, Home,
+  Search, Utensils, Check
 } from 'lucide-react';
 
 // ==========================================
 // 1. TIPE DATA & INTERFACE
 // ==========================================
 
-interface ServiceData {
-  title: string;
-  items: string[];
+interface ServiceItem {
+  name: string;
+  distance: string;
+  rating: number;
+  status: 'Buka' | 'Tutup';
+  priceRange: string;
 }
 
-interface PaymentData {
+interface ServiceData {
   title: string;
-  details: string;
-  items?: string[];
-  actionLabel: string;
-  actionUrl?: string;
-  color: string;
-  bgColor: string;
-  borderColor: string;
+  items: ServiceItem[];
 }
 
 interface ChatMessage {
@@ -73,9 +71,10 @@ const generateCampusResponse = async (prompt: string): Promise<string> => {
     
     Pengetahuan Khusus:
     - Anda tahu tentang fitur 'Kosan Terlaris' di aplikasi ini (Griya Cendekia, Wisma Melati, Kost Executive).
-    - Jika user tanya kos, rekomendasikan berdasarkan budget atau fasilitas.
+    - Anda tahu fitur Laundry dan Ojek bisa dipesan lewat aplikasi ini.
+    - Aplikasi ini KHUSUS untuk cari kos, laundry, dan transportasi (tidak melayani pembayaran UKT).
     
-    Tugas: Bantu cari kos, tips hemat, info kampus, dan rekomendasi makanan.
+    Tugas: Bantu cari kos, tips hemat, dan rekomendasi layanan sekitar kampus.
     Jawaban: Pendek, padat, maksimal 3 paragraf. Gunakan emoji sesekali.`;
 
     const response = await ai.models.generateContent({
@@ -131,7 +130,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
               </div>
               <h1 className="text-3xl font-extrabold tracking-tight">UniConnect</h1>
             </div>
-            <p className="text-blue-100 text-lg font-light tracking-wide">University Life Made Easy.</p>
+            <p className="text-blue-100 text-lg font-light tracking-wide">Solusi Mahasiswa Kekinian.</p>
           </div>
 
           <div className="relative z-10 my-8">
@@ -139,7 +138,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
               {isLogin ? 'Selamat Datang!' : 'Mulai Sekarang!'}
             </h2>
             <p className="text-blue-100 max-w-md text-lg leading-relaxed opacity-90">
-              Satu akun untuk akses ke seluruh layanan kampus, pembayaran UKT, dan pencarian kos.
+              Cari kos nyaman, laundry anti ribet, dan transportasi kampus dalam satu aplikasi.
             </p>
           </div>
 
@@ -163,7 +162,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
             </div>
             
             <p className="text-slate-500 mb-8">
-              {isLogin ? 'Masukkan email dan kata sandi mahasiswa Anda.' : 'Isi data diri untuk akses penuh.'}
+              {isLogin ? 'Masukkan akun mahasiswa Anda.' : 'Isi data diri untuk akses layanan.'}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -183,7 +182,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
                 <Mail className="absolute left-4 top-3.5 text-slate-400 w-5 h-5 group-focus-within:text-blue-600 transition-colors" />
                 <input 
                   type="email" 
-                  placeholder="Email Kampus (@univ.ac.id)" 
+                  placeholder="Email" 
                   required
                   className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm"
                 />
@@ -230,7 +229,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
 
             <div className="mt-8 text-center pt-6 border-t border-slate-100">
               <p className="text-slate-500">
-                {isLogin ? 'Mahasiswa baru? ' : 'Sudah punya akun? '}
+                {isLogin ? 'Belum punya akun? ' : 'Sudah punya akun? '}
                 <button 
                   onClick={() => setIsLogin(!isLogin)}
                   className="text-blue-600 font-bold hover:underline focus:outline-none ml-1"
@@ -296,77 +295,75 @@ const Dashboard: React.FC = () => {
         { user: "Kevin J.", comment: "Fasilitas gym-nya oke banget.", rating: 5, date: "Kemarin" },
         { user: "Reza P.", comment: "Agak mahal tapi worth it.", rating: 4.8, date: "1 bulan lalu" }
       ]
+    },
+     {
+      id: "kos4",
+      name: "Asrama Mahasiswa A",
+      type: "Putra",
+      price: "Rp 600.000",
+      distance: "1km dari Kampus",
+      rating: 4.1,
+      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      facilities: ["Kasur", "Lemari", "K. Mandi Luar"],
+      description: "Asrama standar mahasiswa dengan harga sangat terjangkau. Lingkungan sosial sangat hidup.",
+      reviews: [
+        { user: "Doni", comment: "Rame terus, asik buat cari temen.", rating: 4, date: "2 bulan lalu" },
+      ]
     }
   ];
 
   // --- Data Layanan Lain ---
   const serviceData: Record<string, ServiceData> = {
     laundry: {
-      title: "Mitra Laundry Terverifikasi",
+      title: "Mitra Laundry (Antar-Jemput)",
       items: [
-        "Laundry Kampus UIGM 1 (300m) - ⭐ 4.8",
-        "Laundry Bersih Cepat (450m) - Buka 24 Jam",
-        "Express Laundry (600m) - Diskon KTM 10%"
+        { name: "Laundry Kampus UIGM 1", distance: "300m", rating: 4.8, status: "Buka", priceRange: "Rp 6k/kg" },
+        { name: "Laundry Bersih Cepat", distance: "450m", rating: 4.5, status: "Buka", priceRange: "Rp 7k/kg" },
+        { name: "Express Laundry", distance: "600m", rating: 4.2, status: "Tutup", priceRange: "Rp 10k/kg" }
       ]
     },
     print: {
-      title: "Mitra Print & Photocopy",
+      title: "Mitra Print & Jilid",
       items: [
-        "Digital Printing UIGM (Lobby) - ⭐ 4.9",
-        "PrintCepat Palembang (250m) - Kirim via WA",
-        "Sinar Copy Center (400m) - Jilid Hardcover"
+        { name: "Digital Printing Lobby", distance: "0m (Di Kampus)", rating: 4.9, status: "Buka", priceRange: "Rp 500/lbr" },
+        { name: "PrintCepat Palembang", distance: "250m", rating: 4.7, status: "Buka", priceRange: "Rp 400/lbr" },
+        { name: "Sinar Copy Center", distance: "400m", rating: 4.6, status: "Tutup", priceRange: "Rp 300/lbr" }
       ]
     },
     ojek: {
-      title: "Shelter & Transportasi",
+      title: "Pesan Ojek/Kurir",
       items: [
-        "Shelter Utama UIGM (Gate 1)",
-        "Titik Jemput Ojol (Indomaret Seberang)",
-        "Halte Transmusi (50m)"
+        { name: "Pangkalan Gate 1", distance: "50m", rating: 4.8, status: "Buka", priceRange: "Mulai Rp 5k" },
+        { name: "Kurir Kampus (Jastip)", distance: "Online", rating: 4.9, status: "Buka", priceRange: "Fee Rp 3k" },
       ]
-    }
-  };
-
-  const paymentData: Record<string, PaymentData> = {
-    gopay: {
-      title: "GoPay",
-      details: "Pembayaran instan terhubung dengan aplikasi Gojek.",
-      actionLabel: "Buka Aplikasi GoPay",
-      actionUrl: "https://www.gojek.com/gopay/",
-      color: "text-green-700",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200"
     },
-    dana: {
-      title: "DANA",
-      details: "Dompet digital untuk pembayaran non-tunai yang aman.",
-      actionLabel: "Buka Aplikasi DANA",
-      actionUrl: "https://link.dana.id/",
-      color: "text-blue-700",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200"
-    },
-    bank: {
-      title: "Virtual Account Bank",
-      details: "Transfer otomatis diverifikasi sistem.",
-      items: ["Bank Mandiri (VA)", "Bank BCA (VA)", "Bank BRI (VA)", "Bank BNI (VA)"],
-      actionLabel: "Buat Nomor VA",
-      color: "text-red-700",
-      bgColor: "bg-red-50",
-      borderColor: "border-red-200"
+    food: {
+      title: "Kantin & Makanan",
+      items: [
+        { name: "Ayam Geprek Mas Budi", distance: "150m", rating: 4.8, status: "Buka", priceRange: "Rp 15k" },
+        { name: "Warung Nasi Uduk Ibu Ani", distance: "100m", rating: 4.6, status: "Tutup", priceRange: "Rp 12k" },
+        { name: "Kopi Kenangan Kampus", distance: "Lobby B", rating: 4.9, status: "Buka", priceRange: "Rp 18k" },
+      ]
     }
   };
 
   // --- State ---
-  const [activePayment, setActivePayment] = useState<string | null>(null);
   const [activeService, setActiveService] = useState<string | null>(null);
   const [selectedKosan, setSelectedKosan] = useState<KosanData | null>(null);
   
+  // Kos Filter State
+  const [kosSearch, setKosSearch] = useState("");
+  const [kosFilter, setKosFilter] = useState<'Semua' | 'Putra' | 'Putri' | 'Campur'>("Semua");
+
+  // Notification Toast State
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   // AI Chat
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'Halo bestie! 👋 Aku AI UniConnect. Mau cari makan, info kos, atau curhat tugas?', timestamp: Date.now() }
+    { role: 'model', text: 'Halo bestie! 👋 Aku AI UniConnect. Lagi cari kos atau mau laundry hari ini?', timestamp: Date.now() }
   ]);
   const [isThinking, setIsThinking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -391,46 +388,27 @@ const Dashboard: React.FC = () => {
     setIsThinking(false);
   };
 
-  // --- Render Helpers ---
-  const renderPaymentContent = () => {
-    if (!activePayment) {
-      return (
-        <div className="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-slate-500 text-sm mt-4 animate-fade-in flex items-center justify-center gap-2">
-          <Wallet className="w-4 h-4" />
-          Pilih metode pembayaran di atas
-        </div>
-      );
+  // --- Logic Filtering Kosan ---
+  const filteredKosan = kosanData.filter(kos => {
+    const matchesSearch = kos.name.toLowerCase().includes(kosSearch.toLowerCase());
+    const matchesFilter = kosFilter === 'Semua' || kos.type === kosFilter;
+    return matchesSearch && matchesFilter;
+  });
+
+  // --- Logic Service Ordering ---
+  const handleOrderService = (itemName: string, status: string) => {
+    if (status === 'Tutup') {
+      setToastMessage(`Maaf, ${itemName} sedang tutup.`);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      return;
     }
-    const data = paymentData[activePayment];
-    return (
-      <div className={`mt-4 p-5 rounded-xl border ${data.bgColor} ${data.borderColor} animate-fade-in shadow-sm`}>
-        <div className="flex justify-between items-start mb-2">
-           <h4 className={`font-bold text-lg ${data.color}`}>{data.title}</h4>
-           <Shield className={`w-5 h-5 ${data.color} opacity-50`} />
-        </div>
-        <p className="text-slate-600 text-sm mb-3">{data.details}</p>
-        {data.items && (
-          <ul className="grid grid-cols-2 gap-2 mb-4">
-            {data.items.map((item, idx) => (
-              <li key={idx} className="text-xs font-medium bg-white px-2 py-1.5 rounded border border-slate-200 text-slate-600 flex items-center gap-1">
-                 <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div> {item}
-              </li>
-            ))}
-          </ul>
-        )}
-        {data.actionUrl ? (
-          <a href={data.actionUrl} target="_blank" rel="noreferrer" className={`flex items-center justify-center gap-2 w-full py-3 rounded-lg text-white font-bold shadow-md transition-all hover:-translate-y-1 hover:shadow-lg ${activePayment === 'gopay' ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-500 hover:bg-blue-600'}`}>
-            {data.actionLabel} <ExternalLink className="w-4 h-4" />
-          </a>
-        ) : (
-          <button onClick={() => alert('Nomor VA: 8800 1234 5678 (Simulasi)')} className={`flex items-center justify-center gap-2 w-full py-3 rounded-lg text-white font-bold shadow-md transition-all hover:-translate-y-1 hover:shadow-lg bg-red-600 hover:bg-red-700`}>
-            {data.actionLabel} <ArrowRight className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-    );
+    setToastMessage(`Pesanan ke ${itemName} berhasil dikirim! Menunggu konfirmasi...`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
+  // --- Render Helpers ---
   const renderServiceContent = () => {
     if (!activeService) {
       return (
@@ -446,20 +424,39 @@ const Dashboard: React.FC = () => {
         <div className="absolute top-0 right-0 p-3 opacity-5">
            <MapPin className="w-24 h-24 text-blue-600" />
         </div>
-        <h4 className="font-bold text-slate-800 text-lg mb-3 flex items-center gap-2 relative z-10">
-          {data.title}
-        </h4>
-        <ul className="space-y-3 mb-3 relative z-10">
+        <div className="flex justify-between items-center mb-4 relative z-10">
+           <h4 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+             {data.title}
+           </h4>
+           <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-bold">Terverifikasi</span>
+        </div>
+        
+        <div className="space-y-3 relative z-10">
           {data.items.map((item, idx) => (
-            <li key={idx} className="flex items-start gap-3 text-slate-700 text-sm bg-slate-50 p-3 rounded-lg border border-slate-100 hover:border-blue-300 transition-colors">
-              <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5" />
-              {item}
-            </li>
+            <div 
+              key={idx} 
+              onClick={() => handleOrderService(item.name, item.status)}
+              className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
+            >
+              <div className="flex items-start gap-3">
+                <div className={`mt-1 w-2 h-2 rounded-full ${item.status === 'Buka' ? 'bg-green-500' : 'bg-red-400'}`}></div>
+                <div>
+                  <h5 className="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition-colors">{item.name}</h5>
+                  <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
+                    <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3"/> {item.distance}</span>
+                    <span className="flex items-center gap-0.5 text-yellow-600"><Star className="w-3 h-3 fill-current"/> {item.rating}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-xs font-bold text-slate-700">{item.priceRange}</p>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full ${item.status === 'Buka' ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-500'}`}>
+                  {item.status === 'Buka' ? 'Pesan' : 'Tutup'}
+                </span>
+              </div>
+            </div>
           ))}
-        </ul>
-        <button className="w-full text-xs font-bold text-blue-600 mt-2 hover:underline text-right block relative z-10">
-          Lihat di Peta Besar →
-        </button>
+        </div>
       </div>
     );
   };
@@ -473,7 +470,18 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-poppins bg-slate-50">
+    <div className="min-h-screen flex flex-col font-poppins bg-slate-50 relative">
+      
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-fade-in-up">
+           <div className="bg-green-500 rounded-full p-1">
+             <Check className="w-3 h-3 text-white" />
+           </div>
+           <p className="text-sm font-medium">{toastMessage}</p>
+        </div>
+      )}
+
       {/* Navbar */}
       <header className="bg-white/90 backdrop-blur-md sticky top-0 z-40 shadow-sm border-b border-slate-100 px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
@@ -482,7 +490,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-slate-800 leading-none tracking-tight">UniConnect</h1>
-            <p className="text-[9px] font-bold text-slate-400 tracking-wider uppercase mt-0.5">Digital Campus</p>
+            <p className="text-[9px] font-bold text-slate-400 tracking-wider uppercase mt-0.5">Kos • Laundry • Ojek</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -502,86 +510,124 @@ const Dashboard: React.FC = () => {
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold mb-6 border border-blue-100 shadow-sm">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            SYSTEM ONLINE & SECURE
+            SYSTEM ONLINE
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
             Kampus Digital <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Dalam Genggaman</span>
           </h1>
           <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Platform terintegrasi untuk kebutuhan akademik, pembayaran UKT, hingga mencari kos idaman di sekitar kampus.
+            Platform terintegrasi untuk kebutuhan mahasiswa, layanan laundry, ojek, hingga mencari kos idaman di sekitar kampus.
           </p>
         </div>
       </section>
 
-      {/* SECTION: Kosan Terlaris (New Feature) */}
+      {/* SECTION: Kosan Terlaris (Enhanced) */}
       <section id="kosan" className="py-8 px-6 max-w-7xl mx-auto w-full">
-        <div className="flex justify-between items-end mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
           <div>
              <h2 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-               <Home className="text-blue-600" /> Rekomendasi Kos Terlaris
+               <Home className="text-blue-600" /> Cari Kos Idaman
              </h2>
-             <p className="text-slate-500 text-sm mt-1">Pilihan favorit mahasiswa dengan rating tinggi.</p>
+             <p className="text-slate-500 text-sm mt-1">Gunakan filter untuk menemukan tempat tinggal terbaik.</p>
           </div>
-          <a href="#" className="text-sm font-bold text-blue-600 hover:underline hidden md:block">Lihat Semua →</a>
+          
+          {/* Search & Filter Controls */}
+          <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+            <div className="relative">
+               <Search className="absolute left-3 top-2.5 text-slate-400 w-4 h-4" />
+               <input 
+                 type="text" 
+                 placeholder="Cari nama kos..." 
+                 value={kosSearch}
+                 onChange={(e) => setKosSearch(e.target.value)}
+                 className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+               />
+            </div>
+            <div className="flex bg-slate-100 p-1 rounded-xl">
+              {(['Semua', 'Putra', 'Putri', 'Campur'] as const).map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setKosFilter(filter)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    kosFilter === filter 
+                    ? 'bg-white text-blue-700 shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-           {kosanData.map((kos) => (
-             <div key={kos.id} 
-                  onClick={() => setSelectedKosan(kos)}
-                  className="bg-white rounded-2xl border border-slate-100 shadow-lg hover:shadow-xl transition-all cursor-pointer group overflow-hidden flex flex-col"
-             >
-                <div className="relative h-48 overflow-hidden">
-                   <img src={kos.image} alt={kos.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                   <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-slate-800 shadow-sm">
-                     {kos.type}
-                   </div>
-                   <div className="absolute top-3 right-3 bg-yellow-400 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
-                     <Star className="w-3 h-3 fill-current" /> {kos.rating}
-                   </div>
-                </div>
-                <div className="p-5 flex flex-col flex-1">
-                   <h3 className="text-lg font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">{kos.name}</h3>
-                   <p className="text-xs text-slate-500 mb-3 flex items-center gap-1">
-                     <MapPin className="w-3 h-3" /> {kos.distance}
-                   </p>
-                   
-                   <div className="flex flex-wrap gap-2 mb-4">
-                      {kos.facilities.slice(0, 3).map((fac, idx) => (
-                        <span key={idx} className="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-1 rounded-md text-[10px] font-medium flex items-center gap-1">
-                           {getFacilityIcon(fac)} {fac}
-                        </span>
-                      ))}
-                      {kos.facilities.length > 3 && (
-                        <span className="bg-slate-50 border border-slate-200 text-slate-400 px-2 py-1 rounded-md text-[10px] font-medium">
-                          +{kos.facilities.length - 3}
-                        </span>
-                      )}
-                   </div>
+        {filteredKosan.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+             {filteredKosan.map((kos) => (
+               <div key={kos.id} 
+                    onClick={() => setSelectedKosan(kos)}
+                    className="bg-white rounded-2xl border border-slate-100 shadow-lg hover:shadow-xl transition-all cursor-pointer group overflow-hidden flex flex-col"
+               >
+                  <div className="relative h-48 overflow-hidden">
+                     <img src={kos.image} alt={kos.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-slate-800 shadow-sm">
+                       {kos.type}
+                     </div>
+                     <div className="absolute top-3 right-3 bg-yellow-400 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
+                       <Star className="w-3 h-3 fill-current" /> {kos.rating}
+                     </div>
+                  </div>
+                  <div className="p-5 flex flex-col flex-1">
+                     <h3 className="text-lg font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">{kos.name}</h3>
+                     <p className="text-xs text-slate-500 mb-3 flex items-center gap-1">
+                       <MapPin className="w-3 h-3" /> {kos.distance}
+                     </p>
+                     
+                     <div className="flex flex-wrap gap-2 mb-4">
+                        {kos.facilities.slice(0, 3).map((fac, idx) => (
+                          <span key={idx} className="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-1 rounded-md text-[10px] font-medium flex items-center gap-1">
+                             {getFacilityIcon(fac)} {fac}
+                          </span>
+                        ))}
+                        {kos.facilities.length > 3 && (
+                          <span className="bg-slate-50 border border-slate-200 text-slate-400 px-2 py-1 rounded-md text-[10px] font-medium">
+                            +{kos.facilities.length - 3}
+                          </span>
+                        )}
+                     </div>
 
-                   <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
-                      <div>
-                        <p className="text-[10px] text-slate-400">Mulai dari</p>
-                        <p className="text-blue-700 font-bold text-lg">{kos.price}<span className="text-xs font-normal text-slate-500">/bln</span></p>
-                      </div>
-                      <button className="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-700 transition-colors">
-                        <ArrowRight className="w-5 h-5" />
-                      </button>
-                   </div>
-                </div>
+                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
+                        <div>
+                          <p className="text-[10px] text-slate-400">Mulai dari</p>
+                          <p className="text-blue-700 font-bold text-lg">{kos.price}<span className="text-xs font-normal text-slate-500">/bln</span></p>
+                        </div>
+                        <button className="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-700 transition-colors">
+                          <ArrowRight className="w-5 h-5" />
+                        </button>
+                     </div>
+                  </div>
+               </div>
+             ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-300">
+             <div className="bg-slate-100 p-4 rounded-full inline-block mb-3">
+               <Search className="w-8 h-8 text-slate-400" />
              </div>
-           ))}
-        </div>
+             <p className="text-slate-500 font-medium">Kos tidak ditemukan. Coba kata kunci lain.</p>
+             <button onClick={() => {setKosSearch(""); setKosFilter("Semua")}} className="text-blue-600 text-sm font-bold mt-2 hover:underline">Reset Filter</button>
+          </div>
+        )}
       </section>
 
       {/* Konten Utama Layanan (Existing) */}
       <section id="features" className="py-12 px-6 max-w-7xl mx-auto w-full relative z-20">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Layanan Kampus</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Kartu Peta */}
-            <div className="bg-white rounded-3xl p-1 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full">
+            <div className="bg-white rounded-3xl p-1 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full min-h-[400px]">
               <div className="p-5 pb-0">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="bg-red-100 p-2.5 rounded-xl">
@@ -593,7 +639,7 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex-1 bg-slate-100 rounded-2xl overflow-hidden m-2 min-h-[250px] relative">
+              <div className="flex-1 bg-slate-100 rounded-2xl overflow-hidden m-2 relative">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d127487.22815363892!2d104.748726!3d-2.954794!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e3b75fe2bd91f1f%3A0x941938bc0f24bd0e!2sUniversitas%20Indo%20Global%20Mandiri%20(UIGM)%20Palembang!5e0!3m2!1sid!2sid!4v1700000000001"
                     width="100%" height="100%" style={{ border: 0 }} loading="lazy" title="University Map"
@@ -602,37 +648,7 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Kartu Pembayaran */}
-            <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-green-100 p-2.5 rounded-xl">
-                  <Wallet className="text-green-600 w-6 h-6" />
-                </div>
-                <div>
-                   <h3 className="text-lg font-bold text-slate-800">Pembayaran</h3>
-                   <p className="text-xs text-slate-500">Aman & Terverifikasi</p>
-                </div>
-              </div>
-              
-              <div className="flex gap-2 mb-2">
-                {['gopay', 'dana', 'bank'].map((type) => (
-                  <button 
-                    key={type}
-                    onClick={() => setActivePayment(type)}
-                    className={`flex-1 py-2.5 rounded-xl text-xs font-bold border transition-all uppercase ${
-                      activePayment === type 
-                      ? 'bg-slate-800 text-white border-slate-800 shadow-lg transform scale-105' 
-                      : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
-              {renderPaymentContent()}
-            </div>
-
-            {/* Kartu Layanan */}
+            {/* Kartu Layanan (Enhanced) */}
             <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full">
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-yellow-100 p-2.5 rounded-xl">
@@ -644,27 +660,34 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 mb-2">
+              <div className="grid grid-cols-4 gap-2 mb-2">
                   <button 
                     onClick={() => setActiveService('laundry')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${activeService === 'laundry' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
+                    className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${activeService === 'laundry' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
                   >
-                    <Shirt className="w-5 h-5 mb-1" />
-                    <span className="text-[10px] font-bold">Laundry</span>
+                    <Shirt className="w-4 h-4 mb-1" />
+                    <span className="text-[9px] font-bold">Laundry</span>
                   </button>
                   <button 
                     onClick={() => setActiveService('print')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${activeService === 'print' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
+                    className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${activeService === 'print' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
                   >
-                    <Printer className="w-5 h-5 mb-1" />
-                    <span className="text-[10px] font-bold">Print</span>
+                    <Printer className="w-4 h-4 mb-1" />
+                    <span className="text-[9px] font-bold">Print</span>
                   </button>
                   <button 
                     onClick={() => setActiveService('ojek')}
-                    className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all ${activeService === 'ojek' ? 'bg-amber-50 border-amber-500 text-amber-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
+                    className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${activeService === 'ojek' ? 'bg-amber-50 border-amber-500 text-amber-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
                   >
-                    <Bike className="w-5 h-5 mb-1" />
-                    <span className="text-[10px] font-bold">Ojek</span>
+                    <Bike className="w-4 h-4 mb-1" />
+                    <span className="text-[9px] font-bold">Ojek</span>
+                  </button>
+                  <button 
+                    onClick={() => setActiveService('food')}
+                    className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${activeService === 'food' ? 'bg-pink-50 border-pink-500 text-pink-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
+                  >
+                    <Utensils className="w-4 h-4 mb-1" />
+                    <span className="text-[9px] font-bold">Kantin</span>
                   </button>
               </div>
               {renderServiceContent()}
