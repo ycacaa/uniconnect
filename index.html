@@ -1,942 +1,962 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>UniConnect - Aplikasi Mahasiswa Terintegrasi V11 (Final with Percentage Fee)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            /* UniConnect Colors */
+            --blue-900:#1e3a8a; --blue-700:#1d4ed8; --blue-600:#2563eb; --blue-500:#3b82f6;
+            /* Utility Colors */
+            --muted:#6b7280; 
+            --bg-start: #eef2ff; /* Warna Biru Muda Awal */
+            --bg-end: #f8fbff; /* Warna Biru Muda Akhir */
+            --card:#ffffff;
+            --shadow: 0 12px 40px rgba(2,6,23,0.08);
+            --green-600:#059669;
+            --red-600: #dc2626;
+            --yellow-600: #f59e0b;
+            --purple-600: #9333ea;
+            --instagram: #E4405F; 
+            --whatsapp: #25D366; 
+        }
+        *{box-sizing:border-box}
+        /* Perubahan Background Body Menjadi Biru Muda Gradient */
+        body{
+            margin:0;
+            font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+            color:#0f1724;
+            background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            background-attachment: fixed;
+            -webkit-font-smoothing:antialiased
+        }
+        a{color:inherit;text-decoration:none}
+        /* Navbar & Utility */
+        .navbar{height:64px;background:white;display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-bottom:1px solid #eef2f7;position:sticky;top:0;z-index:50; box-shadow: 0 2px 10px rgba(0,0,0,0.05);}
+        .brand{display:flex;align-items:center;gap:12px}
+        /* Logo Image Style */
+        .logo img {
+            width: 40px; 
+            height: 40px;
+            object-fit: contain;
+        }
+        .brand h4{margin:0;font-weight:700}
+        .navlinks{display:flex;gap:18px;align-items:center;color:var(--muted)}
+        .navlinks a{font-weight:500;transition:color 0.2s}
+        .navlinks a:hover{color:var(--blue-600)}
+        .container{max-width:1150px;margin:28px auto;padding:0 18px}
+        .split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch}
+        .card{background:var(--card);padding:34px;border-radius:12px;box-shadow:var(--shadow);border:1px solid #f1f5f9}
+        .btn-primary{background:linear-gradient(180deg,var(--blue-500),var(--blue-600));color:white;padding:14px 20px;border-radius:14px;border:none;font-weight:700;cursor:pointer;box-shadow:0 12px 30px rgba(37,99,235,0.18);display:inline-flex;align-items:center;gap:10px;transition:opacity 0.2s}
+        .btn-primary:disabled{opacity:0.6;cursor:not-allowed}
+        .divider{height:1px;background:#f1f5f9;margin:20px 0;border-radius:8px}
+        /* Hero & Services */
+        .hero{padding:60px 0 30px 0;text-align:center;}
+        .hero h2{font-size:56px;margin:0;line-height:1.02;font-weight:800}
+        .cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+        .small-card{background:white;padding:18px;border-radius:14px;border:1px solid #f1f5f9;box-shadow:0 8px 18px rgba(2,6,23,0.04);position:relative}
+        .card-title{display:flex;align-items:center;gap:12px;font-weight:700}
+        .map-wrapper{margin-top:12px;border-radius:12px;overflow:hidden;border:1px solid #eef2f7;}
+        /* Service Buttons & Items */
+        .service-btn{padding:12px 16px;border-radius:12px;border:1px dashed #eef2f7;background:white;cursor:pointer;font-weight:600;color:var(--muted);transition:all 0.2s}
+        .service-btn.active{background:#eef2ff;border:1px solid var(--blue-500);color:var(--blue-700);box-shadow:0 2px 8px rgba(37,99,235,0.1)}
+        .service-item {padding: 12px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; cursor: pointer; transition: background 0.2s; position: relative;}
+        .service-item:hover { background: #f8fafc; }
+        .item-icon { width: 48px; height: 48px; border-radius: 8px; background: #eef2f7; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; margin-right: 12px; }
+        /* Card Info UniConnect di Beranda */
+        .uniconnect-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .info-item {
+            padding: 20px 30px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f7;
+            text-align: center;
+            flex: 1;
+            max-width: 250px;
+        }
+        .info-item .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .info-item .value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--blue-700);
+        }
+        .info-item .label {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: -5px;
+        }
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--muted);
+            transition: color 0.2s;
+        }
+        .close-btn:hover {
+            color: var(--red-600);
+        }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f8fafc;
+        }
+        .quantity-control {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .quantity-btn {
+            background: var(--blue-500);
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
-import React, { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom/client';
-import { GoogleGenAI } from "@google/genai";
-import { 
-  MapPin, ShoppingCart, ArrowRight, Printer, Shirt, Bike, 
-  ExternalLink, Bot, X, Send, Mail, Lock, User, GraduationCap,
-  Shield, CheckCircle, Smartphone, Star, Wind, Wifi, Zap, Bath, Home,
-  Search, Utensils, Check
-} from 'lucide-react';
 
-// ==========================================
-// 1. TIPE DATA & INTERFACE
-// ==========================================
+        /* Footer & Fixed Buttons */
+        .footer {
+            padding: 20px 0;
+            text-align: center;
+            border-top: 1px solid #eef2f7;
+            background: white;
+            color: var(--muted);
+            margin-top: 40px;
+        }
+        .footer-content {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 0 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* Ikon media sosial di footer */
+        .social-links a {
+            margin-left: 15px;
+            transition: opacity 0.2s;
+        }
+        .social-links a:hover {
+            opacity: 0.8;
+        }
+        /* Tombol WA Floating di kanan bawah */
+        .fixed-action-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+        .btn-whatsapp {
+            background-color: var(--whatsapp);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 16px rgba(37, 211, 102, 0.3);
+            transition: background-color 0.2s;
+        }
+        /* Success Notification Modal */
+        #successNotification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1500;
+        }
+        #successNotification .modal-content {
+            text-align: center;
+            max-width: 400px;
+            padding: 30px;
+        }
+        #successNotification .modal-content h3 {
+            color: var(--green-600);
+            font-size: 24px;
+        }
+        #successNotification .modal-content .icon-success {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
 
-interface ServiceItem {
-  name: string;
-  distance: string;
-  rating: number;
-  status: 'Buka' | 'Tutup';
-  priceRange: string;
-}
+        /* Responsive */
+        @media(max-width:980px){
+            .split{grid-template-columns:1fr;gap:18px}
+            .hero h2{font-size:36px}
+            .cards-grid{grid-template-columns:1fr}
+            .navbar{padding:0 12px;}
+            /* Sembunyikan navigasi saat mobile */
+            .navlinks a:not(#navHistory):not(#navProfile){display:none;}
+            .footer-content { flex-direction: column; gap: 10px; }
+            .social-links { margin-top: 10px; }
+            .uniconnect-info { flex-direction: column; align-items: center; gap: 10px; }
+            .info-item { max-width: 100%; width: 90%; }
+        }
+    </style>
+</head>
+<body>
 
-interface ServiceData {
-  title: string;
-  items: ServiceItem[];
-}
-
-interface ChatMessage {
-  role: 'user' | 'model';
-  text: string;
-  timestamp: number;
-}
-
-interface Review {
-  user: string;
-  comment: string;
-  rating: number;
-  date: string;
-}
-
-interface KosanData {
-  id: string;
-  name: string;
-  type: 'Putra' | 'Putri' | 'Campur';
-  price: string;
-  distance: string;
-  rating: number;
-  image: string;
-  facilities: string[];
-  description: string;
-  reviews: Review[];
-}
-
-// ==========================================
-// 2. LAYANAN AI (GEMINI)
-// ==========================================
-
-const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
-
-const generateCampusResponse = async (prompt: string): Promise<string> => {
-  if (!apiKey) {
-    return "Mode Demo: API Key belum diatur. Namun sistem UI berjalan normal.";
-  }
-
-  try {
-    const model = "gemini-2.5-flash";
-    const systemInstruction = `Anda adalah 'UniConnect AI', asisten virtual cerdas untuk mahasiswa.
-    Gaya bicara: Santai, gaul, membantu, khas mahasiswa Indonesia.
-    
-    Pengetahuan Khusus:
-    - Anda tahu tentang fitur 'Kosan Terlaris' di aplikasi ini (Griya Cendekia, Wisma Melati, Kost Executive).
-    - Anda tahu fitur Laundry dan Ojek bisa dipesan lewat aplikasi ini.
-    - Aplikasi ini KHUSUS untuk cari kos, laundry, dan transportasi (tidak melayani pembayaran UKT).
-    
-    Tugas: Bantu cari kos, tips hemat, dan rekomendasi layanan sekitar kampus.
-    Jawaban: Pendek, padat, maksimal 3 paragraf. Gunakan emoji sesekali.`;
-
-    const response = await ai.models.generateContent({
-      model: model,
-      contents: prompt,
-      config: {
-        systemInstruction: systemInstruction,
-      }
-    });
-
-    return response.text || "Waduh, koneksi lagi lemot nih. Tanya lagi dong kak!";
-  } catch (error) {
-    console.error("Gemini Error:", error);
-    return "Maaf kak, server AI lagi sibuk. Coba refresh ya!";
-  }
-};
-
-// ==========================================
-// 3. HALAMAN LOGIN (AUTH)
-// ==========================================
-
-interface AuthPageProps {
-  onLogin: () => void;
-}
-
-const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulasi koneksi aman
-    setTimeout(() => {
-      setIsLoading(false);
-      onLogin();
-    }, 1200);
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4 font-poppins">
-      <div className="max-w-5xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px] animate-fade-in-up">
-        
-        {/* Sisi Kiri - Branding */}
-        <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-700 to-indigo-900 p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-64 h-64 bg-white opacity-10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-400 opacity-20 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl"></div>
-
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-6 animate-fade-in">
-              <div className="bg-white/20 backdrop-blur-md p-2 rounded-xl border border-white/30 shadow-lg">
-                <GraduationCap className="text-white w-8 h-8" />
-              </div>
-              <h1 className="text-3xl font-extrabold tracking-tight">UniConnect</h1>
+    <div class="navbar" role="navigation">
+        <div class="brand">
+            <div class="logo">
+                <img src="logo.jpeg" alt="UniConnect Logo" />
             </div>
-            <p className="text-blue-100 text-lg font-light tracking-wide">Solusi Mahasiswa Kekinian.</p>
-          </div>
-
-          <div className="relative z-10 my-8">
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-4 drop-shadow-md">
-              {isLogin ? 'Selamat Datang!' : 'Mulai Sekarang!'}
-            </h2>
-            <p className="text-blue-100 max-w-md text-lg leading-relaxed opacity-90">
-              Cari kos nyaman, laundry anti ribet, dan transportasi kampus dalam satu aplikasi.
-            </p>
-          </div>
-
-          <div className="relative z-10 flex items-center gap-2 text-xs font-medium text-blue-200 uppercase tracking-widest opacity-80">
-            <Shield className="w-4 h-4" />
-            Secure & Encrypted Connection
-          </div>
-        </div>
-
-        {/* Sisi Kanan - Form */}
-        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white relative">
-          <div className="max-w-md mx-auto w-full">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-3xl font-bold text-slate-800">
-                {isLogin ? 'Masuk' : 'Daftar'}
-              </h3>
-              <div className="flex items-center gap-1 text-green-600 bg-green-50 px-3 py-1 rounded-full text-xs font-bold border border-green-100">
-                <Lock className="w-3 h-3" />
-                HTTPS Secured
-              </div>
+            <div>
+                <h4 style="margin:0">UniConnect</h4>
+                <small style="color:var(--muted);font-weight:600">Terintegrasi Kampus</small>
             </div>
-            
-            <p className="text-slate-500 mb-8">
-              {isLogin ? 'Masukkan akun mahasiswa Anda.' : 'Isi data diri untuk akses layanan.'}
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {!isLogin && (
-                <div className="relative group">
-                  <User className="absolute left-4 top-3.5 text-slate-400 w-5 h-5 group-focus-within:text-blue-600 transition-colors" />
-                  <input 
-                    type="text" 
-                    placeholder="Nama Lengkap" 
-                    required
-                    className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm"
-                  />
-                </div>
-              )}
-              
-              <div className="relative group">
-                <Mail className="absolute left-4 top-3.5 text-slate-400 w-5 h-5 group-focus-within:text-blue-600 transition-colors" />
-                <input 
-                  type="email" 
-                  placeholder="Email" 
-                  required
-                  className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm"
-                />
-              </div>
-
-              <div className="relative group">
-                <Lock className="absolute left-4 top-3.5 text-slate-400 w-5 h-5 group-focus-within:text-blue-600 transition-colors" />
-                <input 
-                  type="password" 
-                  placeholder="Kata Sandi" 
-                  required
-                  className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all shadow-sm"
-                />
-              </div>
-
-              {isLogin && (
-                <div className="flex justify-between items-center text-sm">
-                  <label className="flex items-center gap-2 text-slate-500 cursor-pointer select-none">
-                    <input type="checkbox" className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4 border-gray-300" />
-                    Ingat Saya
-                  </label>
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">Lupa Sandi?</a>
-                </div>
-              )}
-
-              <button 
-                type="submit" 
-                disabled={isLoading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-600/30 transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group mt-6"
-              >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    Menghubungkan...
-                  </span>
-                ) : (
-                  <>
-                    {isLogin ? 'Masuk Portal' : 'Buat Akun'}
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className="mt-8 text-center pt-6 border-t border-slate-100">
-              <p className="text-slate-500">
-                {isLogin ? 'Belum punya akun? ' : 'Sudah punya akun? '}
-                <button 
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-blue-600 font-bold hover:underline focus:outline-none ml-1"
-                >
-                  {isLogin ? 'Daftar Disini' : 'Masuk Disini'}
-                </button>
-              </p>
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
-  );
-};
-
-// ==========================================
-// 4. DASHBOARD UTAMA
-// ==========================================
-
-const Dashboard: React.FC = () => {
-  // --- Data Dummy Kosan ---
-  const kosanData: KosanData[] = [
-    {
-      id: "kos1",
-      name: "Griya Cendekia Premium",
-      type: "Putri",
-      price: "Rp 1.500.000",
-      distance: "200m dari Kampus",
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      facilities: ["AC", "WiFi Kencang", "K. Mandi Dalam", "Dapur Bersama", "Parkir Luas"],
-      description: "Kos eksklusif khusus putri dengan keamanan 24 jam. Lingkungan tenang sangat cocok untuk belajar. Tersedia layanan laundry kiloan di lantai dasar.",
-      reviews: [
-        { user: "Sari M.", comment: "Tempatnya bersih banget, ibu kosnya ramah.", rating: 5, date: "2 hari lalu" },
-        { user: "Dina A.", comment: "WiFi kencang buat nugas, mantap!", rating: 4.5, date: "1 minggu lalu" }
-      ]
-    },
-    {
-      id: "kos2",
-      name: "Wisma Melati Hemat",
-      type: "Campur",
-      price: "Rp 850.000",
-      distance: "500m dari Kampus",
-      rating: 4.3,
-      image: "https://images.unsplash.com/photo-1596276020587-8044fe049813?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      facilities: ["Kipas Angin", "WiFi", "K. Mandi Luar", "Bebas Jam Malam"],
-      description: "Pilihan terbaik untuk mahasiswa hemat. Lokasi strategis dekat banyak warung makan murah. Gedung baru direnovasi.",
-      reviews: [
-        { user: "Budi S.", comment: "Murah meriah, sesuai harga.", rating: 4, date: "3 minggu lalu" },
-      ]
-    },
-    {
-      id: "kos3",
-      name: "Kost Executive 88",
-      type: "Putra",
-      price: "Rp 2.100.000",
-      distance: "100m dari Kampus",
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      facilities: ["AC", "Smart TV", "Water Heater", "Gym", "Cleaning Service"],
-      description: "Hunian mewah selangkah dari gerbang kampus. Fasilitas lengkap serasa di hotel. Listrik sudah termasuk biaya sewa.",
-      reviews: [
-        { user: "Kevin J.", comment: "Fasilitas gym-nya oke banget.", rating: 5, date: "Kemarin" },
-        { user: "Reza P.", comment: "Agak mahal tapi worth it.", rating: 4.8, date: "1 bulan lalu" }
-      ]
-    },
-     {
-      id: "kos4",
-      name: "Asrama Mahasiswa A",
-      type: "Putra",
-      price: "Rp 600.000",
-      distance: "1km dari Kampus",
-      rating: 4.1,
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-      facilities: ["Kasur", "Lemari", "K. Mandi Luar"],
-      description: "Asrama standar mahasiswa dengan harga sangat terjangkau. Lingkungan sosial sangat hidup.",
-      reviews: [
-        { user: "Doni", comment: "Rame terus, asik buat cari temen.", rating: 4, date: "2 bulan lalu" },
-      ]
-    }
-  ];
-
-  // --- Data Layanan Lain ---
-  const serviceData: Record<string, ServiceData> = {
-    laundry: {
-      title: "Mitra Laundry (Antar-Jemput)",
-      items: [
-        { name: "Laundry Kampus UIGM 1", distance: "300m", rating: 4.8, status: "Buka", priceRange: "Rp 6k/kg" },
-        { name: "Laundry Bersih Cepat", distance: "450m", rating: 4.5, status: "Buka", priceRange: "Rp 7k/kg" },
-        { name: "Express Laundry", distance: "600m", rating: 4.2, status: "Tutup", priceRange: "Rp 10k/kg" }
-      ]
-    },
-    print: {
-      title: "Mitra Print & Jilid",
-      items: [
-        { name: "Digital Printing Lobby", distance: "0m (Di Kampus)", rating: 4.9, status: "Buka", priceRange: "Rp 500/lbr" },
-        { name: "PrintCepat Palembang", distance: "250m", rating: 4.7, status: "Buka", priceRange: "Rp 400/lbr" },
-        { name: "Sinar Copy Center", distance: "400m", rating: 4.6, status: "Tutup", priceRange: "Rp 300/lbr" }
-      ]
-    },
-    ojek: {
-      title: "Pesan Ojek/Kurir",
-      items: [
-        { name: "Pangkalan Gate 1", distance: "50m", rating: 4.8, status: "Buka", priceRange: "Mulai Rp 5k" },
-        { name: "Kurir Kampus (Jastip)", distance: "Online", rating: 4.9, status: "Buka", priceRange: "Fee Rp 3k" },
-      ]
-    },
-    food: {
-      title: "Kantin & Makanan",
-      items: [
-        { name: "Ayam Geprek Mas Budi", distance: "150m", rating: 4.8, status: "Buka", priceRange: "Rp 15k" },
-        { name: "Warung Nasi Uduk Ibu Ani", distance: "100m", rating: 4.6, status: "Tutup", priceRange: "Rp 12k" },
-        { name: "Kopi Kenangan Kampus", distance: "Lobby B", rating: 4.9, status: "Buka", priceRange: "Rp 18k" },
-      ]
-    }
-  };
-
-  // --- State ---
-  const [activeService, setActiveService] = useState<string | null>(null);
-  const [selectedKosan, setSelectedKosan] = useState<KosanData | null>(null);
-  
-  // Kos Filter State
-  const [kosSearch, setKosSearch] = useState("");
-  const [kosFilter, setKosFilter] = useState<'Semua' | 'Putra' | 'Putri' | 'Campur'>("Semua");
-
-  // Notification Toast State
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-
-  // AI Chat
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatInput, setChatInput] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'Halo bestie! 👋 Aku AI UniConnect. Lagi cari kos atau mau laundry hari ini?', timestamp: Date.now() }
-  ]);
-  const [isThinking, setIsThinking] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isChatOpen]);
-
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-
-    const userMsg: ChatMessage = { role: 'user', text: chatInput, timestamp: Date.now() };
-    setMessages(prev => [...prev, userMsg]);
-    setChatInput("");
-    setIsThinking(true);
-
-    const replyText = await generateCampusResponse(chatInput);
-    
-    const modelMsg: ChatMessage = { role: 'model', text: replyText, timestamp: Date.now() };
-    setMessages(prev => [...prev, modelMsg]);
-    setIsThinking(false);
-  };
-
-  // --- Logic Filtering Kosan ---
-  const filteredKosan = kosanData.filter(kos => {
-    const matchesSearch = kos.name.toLowerCase().includes(kosSearch.toLowerCase());
-    const matchesFilter = kosFilter === 'Semua' || kos.type === kosFilter;
-    return matchesSearch && matchesFilter;
-  });
-
-  // --- Logic Service Ordering ---
-  const handleOrderService = (itemName: string, status: string) => {
-    if (status === 'Tutup') {
-      setToastMessage(`Maaf, ${itemName} sedang tutup.`);
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-      return;
-    }
-    setToastMessage(`Pesanan ke ${itemName} berhasil dikirim! Menunggu konfirmasi...`);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-  };
-
-  // --- Render Helpers ---
-  const renderServiceContent = () => {
-    if (!activeService) {
-      return (
-        <div className="p-4 rounded-xl bg-slate-50 border border-dashed border-slate-300 text-slate-500 text-sm mt-4 animate-fade-in flex items-center justify-center gap-2">
-          <MapPin className="w-4 h-4" />
-          Pilih kategori layanan
-        </div>
-      );
-    }
-    const data = serviceData[activeService];
-    return (
-      <div className="mt-4 p-5 rounded-xl bg-white border border-slate-200 animate-fade-in shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-3 opacity-5">
-           <MapPin className="w-24 h-24 text-blue-600" />
-        </div>
-        <div className="flex justify-between items-center mb-4 relative z-10">
-           <h4 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-             {data.title}
-           </h4>
-           <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded-full font-bold">Terverifikasi</span>
-        </div>
-        
-        <div className="space-y-3 relative z-10">
-          {data.items.map((item, idx) => (
-            <div 
-              key={idx} 
-              onClick={() => handleOrderService(item.name, item.status)}
-              className="flex items-center justify-between p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-white hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
-            >
-              <div className="flex items-start gap-3">
-                <div className={`mt-1 w-2 h-2 rounded-full ${item.status === 'Buka' ? 'bg-green-500' : 'bg-red-400'}`}></div>
-                <div>
-                  <h5 className="font-bold text-slate-800 text-sm group-hover:text-blue-600 transition-colors">{item.name}</h5>
-                  <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
-                    <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3"/> {item.distance}</span>
-                    <span className="flex items-center gap-0.5 text-yellow-600"><Star className="w-3 h-3 fill-current"/> {item.rating}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-bold text-slate-700">{item.priceRange}</p>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full ${item.status === 'Buka' ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-500'}`}>
-                  {item.status === 'Buka' ? 'Pesan' : 'Tutup'}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const getFacilityIcon = (facility: string) => {
-    if (facility.includes("WiFi")) return <Wifi className="w-3 h-3" />;
-    if (facility.includes("AC")) return <Wind className="w-3 h-3" />;
-    if (facility.includes("Mandi")) return <Bath className="w-3 h-3" />;
-    if (facility.includes("Listrik")) return <Zap className="w-3 h-3" />;
-    return <CheckCircle className="w-3 h-3" />;
-  };
-
-  return (
-    <div className="min-h-screen flex flex-col font-poppins bg-slate-50 relative">
-      
-      {/* Toast Notification */}
-      {showToast && (
-        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-[100] bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-fade-in-up">
-           <div className="bg-green-500 rounded-full p-1">
-             <Check className="w-3 h-3 text-white" />
-           </div>
-           <p className="text-sm font-medium">{toastMessage}</p>
-        </div>
-      )}
-
-      {/* Navbar */}
-      <header className="bg-white/90 backdrop-blur-md sticky top-0 z-40 shadow-sm border-b border-slate-100 px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="bg-blue-600 p-1.5 rounded-lg shadow-sm">
-            <GraduationCap className="text-white w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-xl font-extrabold text-slate-800 leading-none tracking-tight">UniConnect</h1>
-            <p className="text-[9px] font-bold text-slate-400 tracking-wider uppercase mt-0.5">Kos • Laundry • Ojek</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <nav className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
-            <a href="#" className="hover:text-blue-600 transition-colors">Beranda</a>
-            <a href="#kosan" className="hover:text-blue-600 transition-colors">Cari Kos</a>
-            <a href="#features" className="hover:text-blue-600 transition-colors">Layanan</a>
-          </nav>
-          <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
-             <User className="w-full h-full p-1 text-slate-500" />
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Banner */}
-      <section className="bg-gradient-to-b from-white to-slate-100 pt-12 pb-20 px-6 text-center relative overflow-hidden">
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold mb-6 border border-blue-100 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            SYSTEM ONLINE
-          </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
-            Kampus Digital <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Dalam Genggaman</span>
-          </h1>
-          <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Platform terintegrasi untuk kebutuhan mahasiswa, layanan laundry, ojek, hingga mencari kos idaman di sekitar kampus.
-          </p>
-        </div>
-      </section>
-
-      {/* SECTION: Kosan Terlaris (Enhanced) */}
-      <section id="kosan" className="py-8 px-6 max-w-7xl mx-auto w-full">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-6 gap-4">
-          <div>
-             <h2 className="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-               <Home className="text-blue-600" /> Cari Kos Idaman
-             </h2>
-             <p className="text-slate-500 text-sm mt-1">Gunakan filter untuk menemukan tempat tinggal terbaik.</p>
-          </div>
-          
-          {/* Search & Filter Controls */}
-          <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
-            <div className="relative">
-               <Search className="absolute left-3 top-2.5 text-slate-400 w-4 h-4" />
-               <input 
-                 type="text" 
-                 placeholder="Cari nama kos..." 
-                 value={kosSearch}
-                 onChange={(e) => setKosSearch(e.target.value)}
-                 className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
-               />
-            </div>
-            <div className="flex bg-slate-100 p-1 rounded-xl">
-              {(['Semua', 'Putra', 'Putri', 'Campur'] as const).map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setKosFilter(filter)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                    kosFilter === filter 
-                    ? 'bg-white text-blue-700 shadow-sm' 
-                    : 'text-slate-500 hover:text-slate-700'
-                  }`}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {filteredKosan.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-             {filteredKosan.map((kos) => (
-               <div key={kos.id} 
-                    onClick={() => setSelectedKosan(kos)}
-                    className="bg-white rounded-2xl border border-slate-100 shadow-lg hover:shadow-xl transition-all cursor-pointer group overflow-hidden flex flex-col"
-               >
-                  <div className="relative h-48 overflow-hidden">
-                     <img src={kos.image} alt={kos.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                     <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-slate-800 shadow-sm">
-                       {kos.type}
-                     </div>
-                     <div className="absolute top-3 right-3 bg-yellow-400 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
-                       <Star className="w-3 h-3 fill-current" /> {kos.rating}
-                     </div>
-                  </div>
-                  <div className="p-5 flex flex-col flex-1">
-                     <h3 className="text-lg font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">{kos.name}</h3>
-                     <p className="text-xs text-slate-500 mb-3 flex items-center gap-1">
-                       <MapPin className="w-3 h-3" /> {kos.distance}
-                     </p>
-                     
-                     <div className="flex flex-wrap gap-2 mb-4">
-                        {kos.facilities.slice(0, 3).map((fac, idx) => (
-                          <span key={idx} className="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-1 rounded-md text-[10px] font-medium flex items-center gap-1">
-                             {getFacilityIcon(fac)} {fac}
-                          </span>
-                        ))}
-                        {kos.facilities.length > 3 && (
-                          <span className="bg-slate-50 border border-slate-200 text-slate-400 px-2 py-1 rounded-md text-[10px] font-medium">
-                            +{kos.facilities.length - 3}
-                          </span>
-                        )}
-                     </div>
-
-                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
-                        <div>
-                          <p className="text-[10px] text-slate-400">Mulai dari</p>
-                          <p className="text-blue-700 font-bold text-lg">{kos.price}<span className="text-xs font-normal text-slate-500">/bln</span></p>
-                        </div>
-                        <button className="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-700 transition-colors">
-                          <ArrowRight className="w-5 h-5" />
-                        </button>
-                     </div>
-                  </div>
-               </div>
-             ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-white rounded-3xl border border-dashed border-slate-300">
-             <div className="bg-slate-100 p-4 rounded-full inline-block mb-3">
-               <Search className="w-8 h-8 text-slate-400" />
-             </div>
-             <p className="text-slate-500 font-medium">Kos tidak ditemukan. Coba kata kunci lain.</p>
-             <button onClick={() => {setKosSearch(""); setKosFilter("Semua")}} className="text-blue-600 text-sm font-bold mt-2 hover:underline">Reset Filter</button>
-          </div>
-        )}
-      </section>
-
-      {/* Konten Utama Layanan (Existing) */}
-      <section id="features" className="py-12 px-6 max-w-7xl mx-auto w-full relative z-20">
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Layanan Kampus</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* Kartu Peta */}
-            <div className="bg-white rounded-3xl p-1 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full min-h-[400px]">
-              <div className="p-5 pb-0">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-red-100 p-2.5 rounded-xl">
-                    <MapPin className="text-red-500 w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-800">Peta Kampus</h3>
-                    <p className="text-xs text-slate-500">Navigasi area sekitar</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex-1 bg-slate-100 rounded-2xl overflow-hidden m-2 relative">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d127487.22815363892!2d104.748726!3d-2.954794!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e3b75fe2bd91f1f%3A0x941938bc0f24bd0e!2sUniversitas%20Indo%20Global%20Mandiri%20(UIGM)%20Palembang!5e0!3m2!1sid!2sid!4v1700000000001"
-                    width="100%" height="100%" style={{ border: 0 }} loading="lazy" title="University Map"
-                    className="absolute inset-0"
-                ></iframe>
-              </div>
-            </div>
-
-            {/* Kartu Layanan (Enhanced) */}
-            <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col h-full">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-yellow-100 p-2.5 rounded-xl">
-                  <ShoppingCart className="text-yellow-600 w-6 h-6" />
-                </div>
-                <div>
-                   <h3 className="text-lg font-bold text-slate-800">Layanan</h3>
-                   <p className="text-xs text-slate-500">Cari kebutuhanmu</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-4 gap-2 mb-2">
-                  <button 
-                    onClick={() => setActiveService('laundry')}
-                    className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${activeService === 'laundry' ? 'bg-blue-50 border-blue-500 text-blue-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
-                  >
-                    <Shirt className="w-4 h-4 mb-1" />
-                    <span className="text-[9px] font-bold">Laundry</span>
-                  </button>
-                  <button 
-                    onClick={() => setActiveService('print')}
-                    className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${activeService === 'print' ? 'bg-indigo-50 border-indigo-500 text-indigo-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
-                  >
-                    <Printer className="w-4 h-4 mb-1" />
-                    <span className="text-[9px] font-bold">Print</span>
-                  </button>
-                  <button 
-                    onClick={() => setActiveService('ojek')}
-                    className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${activeService === 'ojek' ? 'bg-amber-50 border-amber-500 text-amber-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
-                  >
-                    <Bike className="w-4 h-4 mb-1" />
-                    <span className="text-[9px] font-bold">Ojek</span>
-                  </button>
-                  <button 
-                    onClick={() => setActiveService('food')}
-                    className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${activeService === 'food' ? 'bg-pink-50 border-pink-500 text-pink-700' : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
-                  >
-                    <Utensils className="w-4 h-4 mb-1" />
-                    <span className="text-[9px] font-bold">Kantin</span>
-                  </button>
-              </div>
-              {renderServiceContent()}
-            </div>
-
-          </div>
-      </section>
-
-      {/* MODAL DETAIL KOSAN */}
-      {selectedKosan && (
-        <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white w-full md:max-w-2xl max-h-[90vh] md:rounded-3xl rounded-t-3xl overflow-hidden flex flex-col shadow-2xl relative animate-fade-in-up">
-            
-            {/* Close Button */}
-            <button 
-              onClick={() => setSelectedKosan(null)}
-              className="absolute top-4 right-4 z-10 bg-black/20 hover:bg-black/40 text-white p-2 rounded-full backdrop-blur transition-colors"
-            >
-              <X className="w-5 h-5" />
+        <div class="navlinks">
+            <a href="#beranda" id="navBeranda">Beranda</a>
+            <a href="#layanan" id="navLayanan">Layanan</a>
+            <button id="navProfile" style="background:transparent;border:0;border-radius:999px;padding:6px 8px;cursor:pointer">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" style="opacity:0.95"><circle cx="12" cy="12" r="10" stroke="#cbd5e1" stroke-width="1.4"/><path d="M12 11.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM5 18c0-3 4-4.5 7-4.5s7 1.5 7 4.5" stroke="#cbd5e1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-
-            {/* Image Banner */}
-            <div className="h-56 relative shrink-0">
-               <img src={selectedKosan.image} alt={selectedKosan.name} className="w-full h-full object-cover" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-               <div className="absolute bottom-4 left-6 text-white">
-                  <h3 className="text-2xl font-bold">{selectedKosan.name}</h3>
-                  <p className="opacity-90 flex items-center gap-1 text-sm"><MapPin className="w-4 h-4"/> {selectedKosan.distance}</p>
-               </div>
-            </div>
-
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-              
-              {/* Features Grid */}
-              <div className="mb-6">
-                <h4 className="font-bold text-slate-800 mb-3 text-sm uppercase tracking-wider">Fasilitas Menarik</h4>
-                <div className="grid grid-cols-2 gap-3">
-                  {selectedKosan.facilities.map((fac, idx) => (
-                    <div key={idx} className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100 text-slate-700 text-sm">
-                       <div className="bg-white p-1.5 rounded-lg border border-slate-200 text-blue-600">
-                          {getFacilityIcon(fac)}
-                       </div>
-                       {fac}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="mb-6">
-                 <h4 className="font-bold text-slate-800 mb-2 text-sm uppercase tracking-wider">Deskripsi</h4>
-                 <p className="text-slate-600 text-sm leading-relaxed">{selectedKosan.description}</p>
-              </div>
-
-              {/* Reviews */}
-              <div className="mb-4">
-                 <div className="flex items-center justify-between mb-3">
-                   <h4 className="font-bold text-slate-800 text-sm uppercase tracking-wider">Review Penghuni</h4>
-                   <div className="flex items-center gap-1 text-yellow-500 font-bold text-sm">
-                     <Star className="w-4 h-4 fill-current" /> {selectedKosan.rating}
-                   </div>
-                 </div>
-                 
-                 <div className="space-y-3">
-                   {selectedKosan.reviews.map((review, idx) => (
-                     <div key={idx} className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <div className="flex justify-between items-start mb-1">
-                          <div className="flex items-center gap-2">
-                             <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">
-                               {review.user.charAt(0)}
-                             </div>
-                             <span className="text-xs font-bold text-slate-800">{review.user}</span>
-                          </div>
-                          <span className="text-[10px] text-slate-400">{review.date}</span>
-                        </div>
-                        <p className="text-xs text-slate-600 italic">"{review.comment}"</p>
-                     </div>
-                   ))}
-                 </div>
-              </div>
-            </div>
-
-            {/* Bottom Action */}
-            <div className="p-4 border-t border-slate-100 bg-white flex items-center gap-4 shrink-0">
-               <div className="flex-1">
-                 <p className="text-xs text-slate-500">Harga Sewa</p>
-                 <p className="text-xl font-bold text-blue-700">{selectedKosan.price}</p>
-               </div>
-               <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-600/30 flex items-center gap-2 transition-transform active:scale-95">
-                 <Smartphone className="w-4 h-4" />
-                 Hubungi Pemilik
-               </button>
-            </div>
-          </div>
         </div>
-      )}
+    </div>
 
-      {/* AI Chat Bot Floating */}
-      <div className="fixed bottom-6 right-6 z-50">
-        {!isChatOpen ? (
-          <button 
-            onClick={() => setIsChatOpen(true)}
-            className="group bg-slate-900 hover:bg-black text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center gap-3 pr-6 ring-4 ring-slate-200"
-          >
-            <div className="bg-blue-500 p-1.5 rounded-full relative">
-               <Bot className="w-5 h-5 text-white" />
-               <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-400 border-2 border-slate-900 rounded-full"></span>
+    <div class="container" id="loginContainer">
+        <div class="split">
+            <div class="left-panel" style="background:linear-gradient(180deg,var(--blue-900),var(--blue-700));color:white;padding:48px;border-radius:12px;position:relative;box-shadow:var(--shadow)">
+                <div style="font-weight:700;font-size:36px;margin-bottom:12px;">UniConnect</div>
+                <h1>Portal Mahasiswa<br>UIGM Palembang</h1>
+                <p>Akses cepat ke semua kebutuhan kampus dan layanan terdekat.</p>
+                <div style="position:absolute;left:26px;bottom:18px;color:rgba(255,255,255,0.85);font-size:13px;">🔒 SSO Integrated</div>
             </div>
-            <div className="text-left hidden md:block">
-               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-none mb-0.5">Asisten Pintar</p>
-               <p className="text-sm font-bold leading-none">Tanya AI</p>
+
+            <div class="card" aria-labelledby="loginHeading">
+                <h2 id="loginHeading" class="form-title" style="font-weight:800; font-size:28px; color:var(--blue-700);">Masuk Akun SSO</h2>
+                <div class="subtitle" style="margin-bottom:25px;">Gunakan akun resmi kampus Anda.</div>
+                
+                <div style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:#f8fafc;border:1px solid #eef2f7;margin-bottom:14px">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="opacity:0.6"><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7" stroke="#94a3b8" stroke-width="1.2"/><circle cx="12" cy="7" r="4" stroke="#94a3b8" stroke-width="1.2"/></svg>
+                    <input id="email" type="email" placeholder="Email (contoh: user@uigmpalembang.ac.id)" style="border:0;background:transparent;outline:none;font-size:15px;width:100%" />
+                </div>
+                
+                <div style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:#f8fafc;border:1px solid #eef2f7;margin-bottom:30px">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="opacity:0.6"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#94a3b8" stroke-width="1.2"/><path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="#94a3b8" stroke-width="1.2"/></svg>
+                    <input id="password" type="password" placeholder="Kata Sandi (6 Karakter)" style="border:0;background:transparent;outline:none;font-size:15px;width:100%" />
+                </div>
+                
+                <button class="btn-primary" id="loginBtn" style="width:100%">Masuk</button>
             </div>
-          </button>
-        ) : (
-          <div className="bg-white w-[90vw] md:w-96 rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col h-[550px] animate-fade-in-up ring-1 ring-black/5">
-            {/* Header Chat */}
-            <div className="bg-slate-900 p-4 text-white flex justify-between items-center shadow-md">
-              <div className="flex items-center gap-3">
-                <div className="bg-blue-600 p-2 rounded-lg">
-                  <Bot className="w-5 h-5" />
+        </div>
+    </div>
+
+    <section class="hero" id="beranda" style="display:none;padding-top:52px">
+        <div class="container">
+            <span style="display:inline-block;padding:6px 12px;border-radius:22px;background:#e6f3ff;color:var(--blue-600);font-weight:700;font-size:13px">👋 Selamat Datang di UniConnect</span>
+            <h2>Semua Kebutuhan Kampus<br><span style="color:var(--blue-600)">Dalam Satu Aplikasi</span></h2>
+            <p>Jelajahi layanan terdekat, mulai dari tempat tinggal, kebersihan, hingga transportasi.</p>
+            
+            <div class="uniconnect-info">
+                <div class="info-item">
+                    <div class="icon">💡</div>
+                    <div class="value">Motto</div>
+                    <div class="label">University Life Made Easy</div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-sm">UniConnect AI</h3>
-                  <div className="flex items-center gap-1.5 opacity-80">
-                     <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
-                     <p className="text-[10px]">Online • Powered by Gemini</p>
-                  </div>
+                <div class="info-item">
+                    <div class="icon">🏫</div>
+                    <div class="value">12+</div>
+                    <div class="label">Layanan Kampus Terintegrasi</div>
                 </div>
-              </div>
-              <button onClick={() => setIsChatOpen(false)} className="hover:bg-white/10 p-2 rounded-full transition-colors">
-                <X className="w-5 h-5" />
-              </button>
+                <div class="info-item">
+                    <div class="icon">👨‍🎓</div>
+                    <div class="value">5000+</div>
+                    <div class="label">Pengguna Aktif Mahasiswa</div>
+                </div>
+            </div>
+            </div>
+    </section>
+
+    <div class="container section" id="layanan" style="display:none">
+        
+        <div class="cards-grid" style="margin-top:22px">
+            <div class="small-card">
+                <div class="card-title"><div style="width:44px;height:44px;border-radius:10px;background:#eef2ff;display:flex;align-items:center;justify-content:center">📍</div><div>Peta Lokasi Kampus</div></div>
+                <div style="color:var(--muted); font-size:13px; margin-top:4px;">Lokasi penting di sekitar UIGM Palembang.</div>
+                <div class="map-wrapper" style="margin-top:12px;">
+                    <iframe
+                        width="100%"
+                        height="340"
+                        style="border:0; border-radius:12px;"
+                        loading="lazy"
+                        allowfullscreen
+                        src="https://www.google.com/maps?q=Palembang%2C%20Sumatera%20Selatan&z=14&output=embed">
+                    </iframe>
+                    <div style="position:absolute; bottom:10px; left:10px; padding:6px 12px; background:rgba(255,255,255,0.9); border-radius:8px; font-size:12px; font-weight:600; color:var(--blue-700);">
+                        Simulasi Lokasi UIGM
+                    </div>
+                </div>
+            </div>
+
+            <div class="small-card">
+                <div class="card-title"><div style="width:44px;height:44px;border-radius:10px;background:#fefce8;display:flex;align-items:center;justify-content:center">💡</div><div>Layanan Terdekat Kampus</div></div>
+                <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+                    <button class="service-btn active" data-service="Kos">Kos</button>
+                    <button class="service-btn" data-service="Laundry">Laundry</button>
+                    <button class="service-btn" data-service="Ojek">Ojek</button>
+                    <button class="service-btn" data-service="Kantin">Kantin</button>
+                    <button class="service-btn" data-service="Fotokopi">Fotokopi</button>
+                </div>
+
+                <div id="kosFilterControls" style="margin-top:15px; display:flex; gap:8px; align-items:center; border-bottom:1px solid #eef2f7; padding-bottom:12px;">
+                    <input id="searchKos" placeholder="Cari nama kos..." style="flex:1; padding:10px; border-radius:8px; border:1px solid #eef2f7; background:white; font-size:14px;" />
+                    <button id="btnFilterSemua" data-filter="Semua" class="btn-secondary" style="background:#eef2ff; color:var(--blue-700); font-weight:700;">Semua</button>
+                    <button id="btnFilterPutri" data-filter="Putri" class="btn-secondary">Putri</button>
+                    <button id="btnFilterPutra" data-filter="Putra" class="btn-secondary">Putra</button>
+                </div>
+
+                <div id="serviceList" style="margin-top:18px;border-radius:12px;border:1px solid #eef2f7;overflow:hidden">
+                    </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="serviceDetailModal" class="modal" style="display:none;"></div>
+    <div id="kantinDetailModal" class="modal" style="display:none;"></div>
+    <div id="checkoutModal" class="modal" style="display:none;"></div>
+    
+    <div class="container section" id="historySection" style="display:none">
+        <h2 style="font-weight:800; border-bottom:1px solid #eef2f7; padding-bottom:12px; margin-top:0; color:var(--blue-700);">📜 Riwayat Transaksi</h2>
+        <div id="transactionList" style="display:flex; flex-direction:column; gap:12px;">
+            <div style="padding:20px; text-align:center; color:var(--muted); border:1px dashed #eef2f7; border-radius:12px;">
+                Belum ada transaksi yang berhasil.
+            </div>
+        </div>
+    </div>
+
+    <div id="successNotification" class="modal">
+        <div class="modal-content">
+            <div class="icon-success">✅</div>
+            <h3 id="successTitle">Pembayaran Berhasil!</h3>
+            <p id="successMessage" style="font-size:14px; margin-bottom: 20px;">Transaksi Anda sudah dicatat.</p>
+            <button class="btn-primary" style="width:100%; margin-bottom: 10px;" onclick="closeAndNavigate('layanan')">Pesan Layanan Lagi</button>
+            <button class="btn-primary" style="width:100%; background: var(--green-600);" onclick="closeAndNavigate('beranda')">Kembali ke Beranda</button>
+        </div>
+    </div>
+
+    <a href="https://wa.me/62895328839840?text=Halo%2C%20saya%20menemukan%20bug%20di%20aplikasi%20UniConnect.%20[Jelaskan%20masalah%20di%20sini]" 
+        target="_blank" 
+        class="fixed-action-btn btn-whatsapp">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.477 2 2 6.477 2 12c0 3.189 1.353 6.075 3.515 8.125L4 22l2.365-.77c1.884 1.026 4.02 1.637 6.182 1.637 5.523 0 10-4.477 10-10S17.523 2 12 2zM17.152 16.92c-.225-.113-.827-.406-.96-.457-.134-.05-.23-.075-.324.075-.095.15-.368.457-.45.554-.084.098-.168.117-.314.045-.145-.07-.61-.225-1.16-.715-.457-.39-.766-.65-.855-.802-.09-.15-.01-.23.064-.314.075-.075.168-.198.25-.293.084-.095.112-.15.168-.262.056-.113.028-.21-.015-.293-.045-.095-.324-.775-.447-1.06-.12-.285-.24-.246-.324-.257-.084-.01-.178-.01-.272-.01-.095 0-.25.038-.385.19-.136.15-.52.5-.52 1.21s.534 1.403.607 1.507c.074.104 1.04 1.595 2.515 2.296.357.168.632.262.855.334.37.116.704.099.967.062.297-.038.827-.346.942-.682.115-.336.115-.62.083-.683-.03-.062-.12-.095-.256-.15z"/></svg>
+        Laporkan Bug/Bantuan
+    </a>
+
+    <div class="footer">
+        <div class="footer-content">
+            <div class="copyright" style="font-size:14px; color:#475569;">
+                © 2025 UniConnect by Yesa Damayanti
             </div>
             
-            {/* Body Chat */}
-            <div className="flex-1 bg-slate-50 p-4 overflow-y-auto custom-scrollbar">
-              <div className="space-y-4">
-                <div className="text-center text-xs text-slate-400 my-4">Hari ini</div>
-                {messages.map((msg, idx) => (
-                  <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    {msg.role === 'model' && (
-                       <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2 mt-1 flex-shrink-0">
-                          <Bot className="w-3.5 h-3.5 text-blue-600" />
-                       </div>
-                    )}
-                    <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow-sm leading-relaxed ${
-                      msg.role === 'user' 
-                        ? 'bg-blue-600 text-white rounded-br-none' 
-                        : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none'
-                    }`}>
-                      {msg.text}
-                    </div>
-                  </div>
-                ))}
-                {isThinking && (
-                  <div className="flex justify-start">
-                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2 mt-1">
-                          <Bot className="w-3.5 h-3.5 text-blue-600" />
-                    </div>
-                    <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-none px-4 py-3 shadow-sm flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
-                      <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce delay-75"></span>
-                      <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce delay-150"></span>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
+            <div class="social-links">
+                <a href="https://instagram.com/uniconnect___" target="_blank" title="Instagram UniConnect" style="color:var(--instagram);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-instagram"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                </a>
+                <a href="https://wa.me/62895328839840" target="_blank" title="WhatsApp Bantuan" style="color:var(--whatsapp);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 3.189 1.353 6.075 3.515 8.125L4 22l2.365-.77c1.884 1.026 4.02 1.637 6.182 1.637 5.523 0 10-4.477 10-10S17.523 2 12 2zM17.152 16.92c-.225-.113-.827-.406-.96-.457-.134-.05-.23-.075-.324.075-.095.15-.368.457-.45.554-.084.098-.168.117-.314.045-.145-.07-.61-.225-1.16-.715-.457-.39-.766-.65-.855-.802-.09-.15-.01-.23.064-.314.075-.075.168-.198.25-.293.084-.095.112-.15.168-.262.056-.113.028-.21-.015-.293-.045-.095-.324-.775-.447-1.06-.12-.285-.24-.246-.324-.257-.084-.01-.178-.01-.272-.01-.095 0-.25.038-.385.19-.136.15-.52.5-.52 1.21s.534 1.403.607 1.507c.074.104 1.04 1.595 2.515 2.296.357.168.632.262.855.334.37.116.704.099.967.062.297-.038.827-.346.942-.682.115-.336.115-.62.083-.683-.03-.062-.12-.095-.256-.15z"/></svg>
+                </a>
             </div>
-
-            {/* Input Chat */}
-            <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-slate-100 flex gap-2 items-center">
-              <input 
-                type="text" 
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Tulis pesan..."
-                className="flex-1 bg-slate-100 border-0 rounded-full px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-slate-400"
-              />
-              <button 
-                type="submit" 
-                disabled={isThinking || !chatInput.trim()}
-                className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
-          </div>
-        )}
-      </div>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-10 px-6 mt-auto">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-             <div className="bg-slate-900 p-1.5 rounded-lg">
-               <GraduationCap className="w-5 h-5 text-white" />
-             </div>
-             <span className="font-bold text-slate-900 text-lg">UniConnect</span>
-          </div>
-          
-          <div className="text-sm text-slate-500 flex gap-6 font-medium">
-            <a href="#" className="hover:text-blue-600">Privacy</a>
-            <a href="#" className="hover:text-blue-600">Terms</a>
-            <a href="#" className="hover:text-blue-600">Help</a>
-          </div>
-          
-          <div className="text-xs text-slate-400 flex items-center gap-2">
-             <Lock className="w-3 h-3" />
-             <span>SSL Encrypted • 2025 UniConnect</span>
-          </div>
         </div>
-      </footer>
     </div>
-  );
-};
 
-// ==========================================
-// 5. MAIN APP
-// ==========================================
+    <script>
+        // --- KONSTANTA PERHITUNGAN BARU ---
+        const ADMIN_FEE_PERCENTAGE = 0.02; // 2% Biaya Admin
 
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+        // --- DATA SIMULASI UTAMA (10 ITEM PER JENIS) ---
+        const kosNames = ["Kos Melati", "Kos Bahagia", "Kos Elite UIGM", "Wisma Cerdas", "Kos Cempaka", "Graha Putra", "Asrama Mahasiswi", "Kos Amanah", "Kostel Bintang", "Kos Exclusive"];
+        const laundryNames = ["Sinar Kilat", "Bersih Kinclong", "Wash & Go", "Laundry Cepat", "Jemur Kering", "Express 1 Jam", "Hemat Bersih", "Wangi Selalu", "Dry Clean Kampus", "Kilau Pakaian"];
+        const ojekNames = ["Ojol UniRide", "Mobil UniCar", "Ojek Kampus", "Kurir Cepat", "UniExpress Motor", "UniExpress Mobil", "Ojek Mahasiswa", "RideNow", "CarNow", "Delivery Cepat"];
+        const fotokopiNames = ["Fotokopi Cepat", "Percetakan Digital", "Print Murah", "Jilid Express", "Copy Center", "Layanan Skripsi", "Print Warna", "Fotokopi 24 Jam", "Maju Jaya", "Sumber Ilmu"];
+        const warungNames = ["Warung Bu Siti", "Kantin Pak Budi", "Warung Mami", "Nasi Uduk Bang J", "Soto Madura", "Mie Ayam Spesial", "Pondok Gorengan", "Warung Gaul", "Fresh Juice Bar", "Kopi Kampus"];
 
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-  };
+        const allKantinMenus = [
+            { id: 1, name: "Nasi Ayam Geprek", price: 15000, qty: 0 },
+            { id: 2, name: "Nasi Goreng Spesial", price: 18000, qty: 0 },
+            { id: 3, name: "Mie Ayam Bakso", price: 14000, qty: 0 },
+            { id: 4, name: "Soto Ayam", price: 12000, qty: 0 },
+            { id: 5, name: "Capcay Kuah", price: 16000, qty: 0 },
+            { id: 6, name: "Es Teh Manis", price: 4000, qty: 0 },
+            { id: 7, name: "Jus Alpukat", price: 10000, qty: 0 },
+            { id: 8, name: "Ayam Penyet", price: 17000, qty: 0 },
+            { id: 9, name: "Indomie Rebus + Telur", price: 9000, qty: 0 },
+            { id: 10, name: "Nasi Uduk Komplit", price: 15000, qty: 0 }
+        ];
 
-  return (
-    <div className="antialiased text-slate-900 bg-white">
-      {isAuthenticated ? (
-        <Dashboard />
-      ) : (
-        <AuthPage onLogin={handleLogin} />
-      )}
-    </div>
-  );
-}
+        function generateSimulatedData(nameArray, basePrice, unit, serviceType, icon) {
+            return nameArray.map((name, index) => {
+                const id = (index + 1) * 10;
+                const dist = `${(0.5 + index * 0.15).toFixed(1)} km`;
+                const price = basePrice + (index % 3) * (serviceType === 'Kos' ? 50000 : 0);
+                let desc = "";
+                let type = "";
+                
+                if (serviceType === 'Kos') {
+                    desc = `Fasilitas standar, ${index % 2 === 0 ? 'Kamar Mandi Dalam.' : 'Kamar Mandi Luar.'}`;
+                    type = index % 2 === 0 ? "Putri" : "Putra";
+                } else if (serviceType === 'Laundry') {
+                    desc = `Layanan ${index % 2 === 0 ? 'kilat 1 hari.' : 'reguler 2 hari.'}`;
+                    type = index % 2 === 0 ? "Cepat" : "Reguler";
+                } else if (serviceType === 'Ojek') {
+                    desc = `Layanan ${index % 2 === 0 ? 'motor UniRide' : 'mobil UniCar'} terdekat.`;
+                    type = index % 2 === 0 ? "Motor" : "Mobil";
+                } else if (serviceType === 'Fotokopi') {
+                    desc = `Harga fotokopi ${index % 2 === 0 ? 'Rp 200/lembar (B/W).' : 'Rp 500/lembar (Warna).'}`;
+                    type = index % 2 === 0 ? "B/W" : "Warna";
+                } else if (serviceType === 'Kantin') {
+                    desc = `Warung makan mahasiswa, menu bervariasi.`;
+                    type = index % 2 === 0 ? "Buka" : "Tutup";
+                }
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
+                return {
+                    id: id,
+                    name: name,
+                    price: price,
+                    dist: dist,
+                    unit: unit,
+                    desc: desc,
+                    type: type,
+                    icon: icon,
+                    contact: `08XX-${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
+                    paymentMethod: index % 3 === 0 ? "Transfer Bank, E-Wallet" : "E-Wallet, Tunai",
+                    menus: serviceType === 'Kantin' ? JSON.parse(JSON.stringify(allKantinMenus)) : [] // Deep copy menus
+                };
+            });
+        }
 
-const root = ReactDOM.createRoot(rootElement);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+        const allServicesData = {
+            Kos: generateSimulatedData(kosNames, 750000, "Bulan", 'Kos', '🏠'),
+            Laundry: generateSimulatedData(laundryNames, 6500, "Kg", 'Laundry', '🧺'),
+            Ojek: generateSimulatedData(ojekNames, 7000, "Trip", 'Ojek', '🛵'),
+            Kantin: generateSimulatedData(warungNames, 8000, "Item", 'Kantin', '🍽️'),
+            Fotokopi: generateSimulatedData(fotokopiNames, 200, "Lbr", 'Fotokopi', '🖨️')
+        };
+        
+        let transactionHistory = []; 
+
+        // --- DOM ELEMENTS & VARIABLES ---
+        const loginBtn = document.getElementById('loginBtn');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginContainer = document.getElementById('loginContainer');
+        const hero = document.querySelector('.hero');
+        const layananSection = document.getElementById('layanan');
+        const serviceList = document.getElementById('serviceList');
+        const mainServiceBtns = document.querySelectorAll('.service-btn');
+        const kosFilterControls = document.getElementById('kosFilterControls');
+        const searchKosInput = document.getElementById('searchKos');
+        const filterBtns = document.querySelectorAll('[id^="btnFilter"]');
+        
+        const serviceDetailModal = document.getElementById('serviceDetailModal');
+        const kantinDetailModal = document.getElementById('kantinDetailModal');
+        const checkoutModal = document.getElementById('checkoutModal');
+        const successNotification = document.getElementById('successNotification');
+        
+        let currentService = 'Kos';
+        let currentItemForBooking = null; 
+        let currentKantinSelections = []; 
+        
+        const formatRupiah = (number) => `Rp ${Math.round(number).toLocaleString('id-ID')}`;
+
+        // --- FUNGSI NAVIGASI ---
+        function navigate(sectionId) {
+            // Sembunyikan semua section utama
+            loginContainer.style.display = 'none';
+            hero.style.display = 'none';
+            layananSection.style.display = 'none';
+            document.getElementById('historySection').style.display = 'none';
+            
+            // Tutup semua modal jika ada
+            closeModal('serviceDetailModal');
+            closeModal('kantinDetailModal');
+            closeModal('checkoutModal');
+            closeModal('successNotification');
+
+
+            // Tampilkan section yang diminta
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+
+            // Update styling navigasi aktif
+            document.querySelectorAll('.navlinks a').forEach(a => a.style.fontWeight = '500');
+            
+            let navId = '';
+            if (sectionId === 'historySection') {
+                navId = 'navHistory';
+                renderTransactionHistory();
+            } else if (sectionId === 'layanan') {
+                navId = 'navLayanan';
+            } else if (sectionId === 'beranda') {
+                navId = 'navBeranda';
+            }
+            
+            const activeNav = document.getElementById(navId);
+            if (activeNav) {
+                activeNav.style.fontWeight = '700';
+            }
+        }
+        
+        function closeAndNavigate(sectionId) {
+            closeModal('successNotification');
+            navigate(sectionId);
+        }
+
+        // --- FUNGSI RENDER LAYANAN ---
+        function renderServiceList(service, filter = 'Semua', searchQuery = '') {
+            currentService = service;
+            
+            // Tampilkan atau sembunyikan filter Kos
+            kosFilterControls.style.display = service === 'Kos' ? 'flex' : 'none';
+            
+            // Update tampilan tombol filter Kos
+            if (service !== 'Kos') {
+                // Reset filter Kos jika pindah layanan
+                filterBtns.forEach(btn => {
+                    btn.style.background = 'white';
+                    btn.style.color = 'var(--muted)';
+                    btn.style.fontWeight = '600';
+                });
+                document.getElementById('btnFilterSemua').style.background = '#eef2ff';
+                document.getElementById('btnFilterSemua').style.color = 'var(--blue-700)';
+                document.getElementById('btnFilterSemua').style.fontWeight = '700';
+            }
+            
+            let filteredData = allServicesData[service] || [];
+
+            // Filter berdasarkan jenis (hanya Kos)
+            if (service === 'Kos' && filter !== 'Semua') {
+                filteredData = filteredData.filter(item => item.type === filter);
+            }
+            
+            // Filter berdasarkan pencarian nama
+            if (searchQuery) {
+                filteredData = filteredData.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+            }
+
+            let htmlContent = '';
+
+            if (filteredData.length === 0) {
+                htmlContent = `<div style="padding:20px; text-align:center; color:var(--muted);">Tidak ada ${service.toLowerCase()} yang ditemukan.</div>`;
+            } else {
+                htmlContent = filteredData.map(item => `
+                    <div class="service-item" data-id="${item.id}" data-service-type="${service}">
+                        <div class="item-icon" style="background:${service === 'Kantin' ? '#fffbeb' : '#eef2ff'};">${item.icon}</div>
+                        <div style="flex:1;">
+                            <div style="font-weight:700; color:#0f172a;">${item.name}</div>
+                            <div style="font-size:13px; color:var(--muted);">${item.desc}</div>
+                        </div>
+                        <div style="text-align:right; flex-shrink:0;">
+                            <div style="font-weight:700; color:var(--green-600); font-size:14px;">${formatRupiah(item.price)}</div>
+                            <div style="font-size:12px; color:var(--muted);">/${item.unit} (${item.dist})</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            serviceList.innerHTML = htmlContent;
+            
+            // Tambahkan kembali event listener setelah konten diperbarui
+            document.querySelectorAll('.service-item').forEach(item => {
+                item.addEventListener('click', handleServiceClick);
+            });
+        }
+        
+        function handleServiceClick(e) { 
+            const id = parseInt(e.currentTarget.dataset.id);
+            const serviceType = e.currentTarget.dataset.serviceType;
+            const item = allServicesData[serviceType].find(i => i.id === id);
+            
+            if (item) {
+                currentItemForBooking = item;
+                if (serviceType === 'Kantin') {
+                    showKantinDetailModal(item);
+                } else {
+                    showServiceDetailModal(item);
+                }
+            }
+        }
+        
+        // --- MODAL & CHECKOUT FUNCTIONS ---
+
+        function showServiceDetailModal(item) {
+            let actionText = '';
+            if (item.unit === 'Bulan') actionText = 'Pesan Sekarang';
+            else if (item.unit === 'Kg') actionText = 'Hitung & Pesan';
+            else actionText = 'Pesan Layanan';
+
+            serviceDetailModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 style="margin:0;">Detail ${currentService}: ${item.name}</h3>
+                        <button class="close-btn" onclick="closeModal('serviceDetailModal')">×</button>
+                    </div>
+                    <p style="font-size:14px; color:var(--muted);">${item.desc}</p>
+                    
+                    <div style="padding:15px; background:#f8fafc; border-radius:10px; margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <span style="font-weight:600;">Harga:</span> 
+                            <span style="font-weight:700; color:var(--green-600);">${formatRupiah(item.price)}/${item.unit}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="font-weight:600;">Jarak:</span> 
+                            <span>${item.dist}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-top:8px;">
+                            <span style="font-weight:600;">Tipe:</span> 
+                            <span>${item.type}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom:20px;">
+                        <h4 style="margin-bottom:5px; font-size:16px;">Kontak & Pembayaran</h4>
+                        <p style="font-size:14px;">Kontak Pemilik: <span style="font-weight:600;">${item.contact}</span></p>
+                        <p style="font-size:14px;">Metode Pembayaran: <span style="font-weight:600;">${item.paymentMethod}</span></p>
+                    </div>
+                    
+                    <button class="btn-primary" style="width:100%" onclick="showCheckoutModal('${item.unit}')">
+                        ${actionText}
+                    </button>
+                </div>
+            `;
+            serviceDetailModal.style.display = 'flex';
+        }
+
+        function showKantinDetailModal(item) {
+            currentKantinSelections = item.menus.map(menu => ({ ...menu })); // Deep copy for current order
+            renderKantinMenu();
+            kantinDetailModal.style.display = 'flex';
+        }
+
+        function renderKantinMenu() {
+            const item = currentItemForBooking;
+            let menuHtml = '';
+            let totalOrder = 0;
+            
+            currentKantinSelections.forEach(menu => {
+                totalOrder += menu.price * menu.qty;
+                menuHtml += `
+                    <div class="menu-item" data-id="${menu.id}">
+                        <div>
+                            <div style="font-weight:600;">${menu.name}</div>
+                            <div style="font-size:13px; color:var(--green-600);">${formatRupiah(menu.price)}</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="updateKantinQuantity(${menu.id}, -1)">-</button>
+                            <span id="qty-${menu.id}">${menu.qty}</span>
+                            <button class="quantity-btn" onclick="updateKantinQuantity(${menu.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            kantinDetailModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 style="margin:0;">Pesan di Kantin: ${item.name}</h3>
+                        <button class="close-btn" onclick="closeModal('kantinDetailModal')">×</button>
+                    </div>
+                    <p style="font-size:14px; color:var(--muted);">Silakan pilih menu yang ingin Anda pesan.</p>
+                    
+                    <div style="max-height: 300px; overflow-y: auto; border: 1px solid #eef2f7; border-radius: 8px; margin-bottom: 15px; padding: 0 10px;">
+                        ${menuHtml}
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-top:1px solid #f1f5f9;">
+                        <span style="font-weight:700;">Total Pesanan:</span>
+                        <span id="kantinTotal" style="font-size:18px; font-weight:800; color:var(--blue-700);">${formatRupiah(totalOrder)}</span>
+                    </div>
+
+                    <button class="btn-primary" style="width:100%" ${totalOrder === 0 ? 'disabled' : ''} onclick="prepareKantinCheckout(${totalOrder})">
+                        Lanjut ke Pembayaran (${formatRupiah(totalOrder)})
+                    </button>
+                </div>
+            `;
+        }
+
+        function updateKantinQuantity(menuId, change) {
+            const menu = currentKantinSelections.find(m => m.id === menuId);
+            if (menu) {
+                menu.qty = Math.max(0, menu.qty + change);
+                renderKantinMenu(); // Re-render modal untuk update tampilan
+            }
+        }
+
+        function prepareKantinCheckout(totalAmount) {
+            const selectedItems = currentKantinSelections.filter(m => m.qty > 0);
+            if (selectedItems.length > 0) {
+                closeModal('kantinDetailModal');
+                showCheckoutModal('Kantin', totalAmount, selectedItems);
+            }
+        }
+
+        function showCheckoutModal(serviceType, customPrice = null, selectedItems = []) {
+            let subtotalTagihan;
+            let transactionDesc;
+
+            if (serviceType === 'Kantin' && customPrice !== null) {
+                subtotalTagihan = customPrice;
+                transactionDesc = selectedItems.map(item => `${item.name} x${item.qty}`).join(', ');
+            } else {
+                // Untuk Kos, Laundry, Ojek, Fotokopi (Simulasi pemesanan 1 item)
+                subtotalTagihan = currentItemForBooking.price;
+                transactionDesc = currentItemForBooking.name;
+            }
+            
+            // HITUNG BIAYA ADMIN (2% dari subtotal)
+            const biayaAdmin = subtotalTagihan * ADMIN_FEE_PERCENTAGE;
+            const totalAkhir = subtotalTagihan + biayaAdmin;
+
+            checkoutModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 style="margin:0;">Konfirmasi Pembayaran</h3>
+                        <button class="close-btn" onclick="closeModal('checkoutModal')">×</button>
+                    </div>
+                    
+                    <p style="font-size:16px;">Anda akan melakukan pembayaran untuk layanan:</p>
+                    
+                    <div style="padding:15px; background:#eef2ff; border-radius:10px; margin-bottom:20px;">
+                        <div style="font-weight:700; color:var(--blue-700); margin-bottom:5px;">${currentService} (${currentItemForBooking.name})</div>
+                        <div style="font-size:14px; color:var(--muted);">${transactionDesc}</div>
+                    </div>
+                    
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <span style="font-weight:500;">Subtotal Tagihan:</span>
+                        <span style="font-weight:600;">${formatRupiah(subtotalTagihan)}</span>
+                    </div>
+                    
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <span style="font-weight:500;">Biaya Admin (2%):</span>
+                        <span style="font-weight:600; color:var(--red-600);">${formatRupiah(biayaAdmin)}</span>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                        <span style="font-weight:700;">TOTAL AKHIR:</span>
+                        <span id="finalTotal" style="font-size:24px; font-weight:800; color:var(--blue-700);" data-amount="${totalAkhir}">${formatRupiah(totalAkhir)}</span>
+                    </div>
+                    
+                    <div style="margin-bottom:25px;">
+                        <label for="paymentMethod" style="font-weight:600; display:block; margin-bottom:8px;">Pilih Metode Pembayaran</label>
+                        <select id="paymentMethod" style="width:100%; padding:12px; border-radius:8px; border:1px solid #eef2f7; background:white;">
+                            <option value="e-wallet">E-Wallet (Dana/Gopay/OVO)</option>
+                            <option value="transfer">Transfer Bank (BCA/Mandiri)</option>
+                            <option value="cash">Bayar di Tempat (Tunai)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" style="width:100%;" onclick="processPayment('${serviceType}', ${totalAkhir}, '${transactionDesc}', ${biayaAdmin})">
+                        Bayar Sekarang ${formatRupiah(totalAkhir)}
+                    </button>
+                </div>
+            `;
+            checkoutModal.style.display = 'flex';
+        }
+
+        function processPayment(serviceType, amount, description, adminFee) {
+            closeModal('checkoutModal');
+            
+            // Simulasi proses pembayaran
+            setTimeout(() => {
+                const transaction = {
+                    date: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
+                    service: serviceType,
+                    name: currentItemForBooking.name,
+                    description: description,
+                    amount: amount,
+                    status: 'Sukses'
+                };
+                transactionHistory.unshift(transaction); // Tambahkan ke depan
+                
+                // 1. Arahkan ke Riwayat Transaksi
+                navigate('historySection'); 
+                
+                // 2. Tampilkan notifikasi sukses 
+                document.getElementById('successMessage').innerHTML = `Anda telah membayar <b>${formatRupiah(amount)}</b> (Termasuk Biaya Admin <b>${formatRupiah(adminFee)}</b>) untuk ${description}.`;
+                successNotification.style.display = 'flex';
+
+
+            }, 500);
+        }
+
+        function renderTransactionHistory() {
+            const list = document.getElementById('transactionList');
+            if (transactionHistory.length === 0) {
+                list.innerHTML = `<div style="padding:20px; text-align:center; color:var(--muted); border:1px dashed #eef2f7; border-radius:12px;">
+                    Belum ada transaksi yang berhasil.
+                </div>`;
+                return;
+            }
+
+            list.innerHTML = transactionHistory.map(t => `
+                <div style="padding:15px; border-radius:10px; border:1px solid #eef2f7; background:white;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="font-weight:700; color:var(--blue-700);">${t.service} - ${t.name}</div>
+                        <span style="font-size:12px; color:var(--muted);">${t.date}</span>
+                    </div>
+                    <div style="font-size:13px; color:var(--muted); margin-top:3px;">${t.description}</div>
+                    <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                        <span style="padding:4px 8px; border-radius:6px; font-size:12px; font-weight:600; background:#dcfce7; color:var(--green-600);">${t.status}</span>
+                        <span style="font-weight:800; color:var(--red-600);">${formatRupiah(t.amount)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // --- EVENT LISTENERS & INISIALISASI ---
+        
+        // Login (Validasi Sederhana: harus diisi)
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (emailInput.value.trim() !== "" && passwordInput.value.trim() !== "") {
+                navigate('beranda'); // Pindah ke Beranda setelah login
+                renderServiceList('Kos', 'Semua');
+                
+                // Tampilkan semua navlinks
+                document.querySelectorAll('.navlinks a').forEach(a => a.style.display = 'inline-block');
+                
+                const navlinks = document.querySelector('.navlinks');
+                if (!document.getElementById('navHistory')) {
+                    const profileBtn = document.getElementById('navProfile');
+                    const historyLink = document.createElement('a');
+                    historyLink.href = "#riwayat";
+                    historyLink.textContent = "Riwayat";
+                    historyLink.id = "navHistory";
+                    historyLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        navigate('historySection');
+                    });
+                    navlinks.insertBefore(historyLink, profileBtn);
+                }
+                document.getElementById('navBeranda').style.fontWeight = '700';
+            } else {
+                alert('Mohon isi Email dan Kata Sandi.');
+            }
+        });
+        
+        document.getElementById('navBeranda').addEventListener('click', (e) => { e.preventDefault(); navigate('beranda'); });
+        document.getElementById('navLayanan').addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            navigate('layanan'); 
+            // Pastikan Kos adalah default saat masuk ke Layanan
+            renderServiceList('Kos');
+            mainServiceBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-service="Kos"]').classList.add('active');
+            
+            // Mengatur style tombol Kos menjadi aktif
+            document.querySelector('[data-service="Kos"]').style.background = '#eef2ff'; 
+            document.querySelector('[data-service="Kos"]').style.border = '1px solid var(--blue-500)';
+            document.querySelector('[data-service="Kos"]').style.color = 'var(--blue-700)';
+        });
+        
+        filterBtns.forEach(btn => { 
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => {
+                    b.style.background = 'white';
+                    b.style.color = 'var(--muted)';
+                    b.style.fontWeight = '600';
+                });
+                this.style.background = '#eef2ff'; 
+                this.style.color = 'var(--blue-700)';
+                this.style.fontWeight = '700';
+                updateKosView(this.dataset.filter);
+            });
+        });
+        
+        searchKosInput.addEventListener('input', () => updateKosView());
+        function updateKosView(filterOverride) { 
+            const currentFilterBtn = document.querySelector('#kosFilterControls .btn-secondary[style*="background:#eef2ff"]');
+            const currentFilter = filterOverride || (currentFilterBtn ? currentFilterBtn.dataset.filter : 'Semua');
+            const searchQuery = searchKosInput.value;
+            renderServiceList('Kos', currentFilter, searchQuery);
+        }
+        
+        mainServiceBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                mainServiceBtns.forEach(b => {
+                    b.classList.remove('active');
+                    b.style.background = 'white';
+                    b.style.border = '1px dashed #eef2f7';
+                    b.style.color = 'var(--muted)';
+                });
+                this.classList.add('active');
+                
+                this.style.background = '#eef2ff'; 
+                this.style.border = '1px solid var(--blue-500)';
+                this.style.color = 'var(--blue-700)';
+
+                renderServiceList(this.dataset.service);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            navigate('loginContainer'); 
+            // Sembunyikan link navbar saat belum login
+            document.querySelectorAll('.navlinks a').forEach(a => a.style.display = 'none');
+        });
+    </script>
+</body>
+</html>
 
